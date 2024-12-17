@@ -1,1 +1,1 @@
-{"root":["./src/index.ts"],"version":"5.7.2"}
+{"root":["./src/getDriver.ts","./src/index.ts","./src/joinMeet.ts","./src/startScreenShare.ts"],"version":"5.7.2"}

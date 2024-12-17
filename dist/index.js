@@ -9,36 +9,40 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const selenium_webdriver_1 = require("selenium-webdriver");
-const chrome_1 = require("selenium-webdriver/chrome");
+const getDriver_1 = require("./getDriver");
+const startScreenShare_1 = require("./startScreenShare");
+const joinMeet_1 = require("./joinMeet");
 function main() {
     return __awaiter(this, void 0, void 0, function* () {
-        const options = new chrome_1.Options({});
-        options.addArguments("--disable-blink-features=AutomationControlled");
-        options.addArguments("--use-fake-ui-for-media-stream");
-        let driver = yield new selenium_webdriver_1.Builder()
-            .forBrowser(selenium_webdriver_1.Browser.CHROME)
-            .setChromeOptions(options)
-            .build();
+        let driver = null;
         try {
-            yield driver.get("https://meet.google.com/hgk-ossr-yjo");
-            yield driver.sleep(3000);
-            const gotit = yield driver.wait(selenium_webdriver_1.until.elementLocated(selenium_webdriver_1.By.xpath('//span[contains(text(),"Got it")]')), 10000000);
-            yield gotit.click();
-            const element = yield driver.wait(selenium_webdriver_1.until.elementLocated(selenium_webdriver_1.By.className("qdOxv-fmcmS-wGMbrd")), 1000);
-            yield element.clear();
-            yield element.click();
-            yield element.sendKeys("Manuj Bot");
-            const buttonInput = yield driver.wait(selenium_webdriver_1.until.elementLocated(selenium_webdriver_1.By.xpath('//span[contains(text(),"Ask to join") or contains(text(),"Join")]')), 1000);
-            yield buttonInput.click();
-            yield driver.sleep(1000000);
+            driver = yield (0, getDriver_1.getDriver)();
+            console.log("Driver initialized successfully");
+            yield (0, joinMeet_1.joinMeet)(driver);
+            console.log("Joined meeting, waiting for approval...");
+            yield driver.sleep(15000); // Wait 15 seconds for meeting join approval
+            yield (0, startScreenShare_1.startScreenShare)(driver);
+            console.log("Screen share completed");
+            // Keep the session alive for a while to maintain the screen share
+            yield driver.sleep(30000);
         }
         catch (error) {
-            console.error("An error occurred:", error);
+            console.error("Error occurred:", error);
         }
         finally {
-            yield driver.quit();
+            if (driver) {
+                try {
+                    yield driver.quit();
+                    console.log("Driver session closed successfully");
+                }
+                catch (quitError) {
+                    console.error("Error closing driver session:", quitError);
+                }
+            }
         }
     });
 }
-main();
+main().catch(error => {
+    console.error("Unhandled error in main:", error);
+    process.exit(1);
+});
