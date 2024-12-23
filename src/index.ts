@@ -4,21 +4,19 @@ import { joinMeet } from "./joinMeet";
 
 async function main() {
   let driver = null;
-  
+
   try {
     driver = await getDriver();
     console.log("Driver initialized successfully");
 
     await joinMeet(driver);
     console.log("Joined meeting, waiting for approval...");
-    await driver.sleep(15000); // Wait 15 seconds for meeting join approval
-    
+    await driver.sleep(10000);
+
     await startScreenShare(driver);
     console.log("Screen share completed");
-    
-    // Keep the session alive for a while to maintain the screen share
+
     await driver.sleep(30000);
-    
   } catch (error) {
     console.error("Error occurred:", error);
   } finally {
@@ -33,7 +31,7 @@ async function main() {
   }
 }
 
-main().catch(error => {
+main().catch((error) => {
   console.error("Unhandled error in main:", error);
   process.exit(1);
 });

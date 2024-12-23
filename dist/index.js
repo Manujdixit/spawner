@@ -20,10 +20,9 @@ function main() {
             console.log("Driver initialized successfully");
             yield (0, joinMeet_1.joinMeet)(driver);
             console.log("Joined meeting, waiting for approval...");
-            yield driver.sleep(15000); // Wait 15 seconds for meeting join approval
+            yield driver.sleep(10000);
             yield (0, startScreenShare_1.startScreenShare)(driver);
             console.log("Screen share completed");
-            // Keep the session alive for a while to maintain the screen share
             yield driver.sleep(30000);
         }
         catch (error) {
@@ -42,7 +41,7 @@ function main() {
         }
     });
 }
-main().catch(error => {
+main().catch((error) => {
     console.error("Unhandled error in main:", error);
     process.exit(1);
 });
